@@ -4,12 +4,12 @@ const IncomeSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true,
+      required: [true, 'Title is required'],
       trim: true,
     },
     amount: {
       type: Number,
-      required: true,
+      required: [true, 'Amount is required'],
       trim: true,
       maxLength: 20,
     },
@@ -19,17 +19,22 @@ const IncomeSchema = new mongoose.Schema(
     },
     date: {
       type: Date,
-      required: true,
+      required: [true, 'Date is required'],
     },
     category: {
       type: String,
-      required: true,
+      required: [true, 'Category is required'],
       trim: true,
     },
     description: {
       type: String,
-      required: true,
+      required: [true, 'Description is required'],
       trim: true,
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Users',
+      required: [true, 'User ID is required'],
     },
   },
   {
