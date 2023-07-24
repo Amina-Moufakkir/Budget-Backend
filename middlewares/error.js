@@ -1,18 +1,28 @@
-//Not found
-const notFound = (req, res, next) => {
-  const error = new Error(`Not Found - ${req.originalUrl}`);
-  res.status(404);
+const notFoundMiddleware = (req, res, next) => {
+  const error = new Error(`${req.originalUrl} - Not Found`);
+  error.statusCode = 404;
   next(error);
 };
 
-//Err handler
-const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
-  res.status(statusCode);
-  res.json({
-    message: err?.message,
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
-  });
+const errorHandlerMiddleware = (err, req, res, next) => {
+  console.log(err);
+  const defaultError = {
+    statusCode: err.statusCode || 500,
+    msg: err.message || 'Something went wrong, please try again later',
+  };
+  if (err.name === 'ValidationError') {
+    defaultError.statusCode = 400;
+
+    defaultError.msg = Object.values(err.errors)
+      .map((value) => value.message)
+      .join('. ');
+  }
+  if (err.code && err.code === 11000) {
+    defaultError.statusCode = 400;
+    defaultError.msg = `${Object.keys(err.deyValue)} field has to be unique`;
+  }
+  // res.status(defaultError.statusCode).json({ msg: err }); // helps check the err object
+  res.status(defaultError.statusCode).json({ msg: defaultError.msg });
 };
 
-module.exports = { errorHandler, notFound };
+module.exports = { errorHandlerMiddleware, notFoundMiddleware };

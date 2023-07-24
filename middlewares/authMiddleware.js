@@ -1,27 +1,19 @@
 const jwt = require('jsonwebtoken');
-const userSchema = require('../models/userModel');
+
+const UnAuthenticatedError = require('../error-helpers/UnAuthenticatedError');
 
 const authMiddleware = async (req, res, next) => {
-  let token;
-
-  if (req?.headers?.authorization?.startsWith('Bearer')) {
-    token = req?.headers?.authorization?.split(' ')[1];
-    try {
-      if (token) {
-        const decodedUser = jwt.verify(token, process.env.JWT_KEY);
-        const user = await userSchema.findById(decodedUser.id);
-
-        req.user = user;
-        next();
-      }
-    } catch (e) {
-      console.log('Not Authorized', e);
-    }
-  } else {
-    return res.status(403).json({
-      status: false,
-      message: 'No Token Found',
-    });
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
+    throw new UnAuthenticatedError('Authentication Invalid');
+  }
+  const token = authHeader.split(' ')[1];
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = { userId: payload.userId };
+    next();
+  } catch (e) {
+    throw new UnAuthenticatedError('Authentication Invalid');
   }
 };
 

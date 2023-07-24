@@ -1,41 +1,42 @@
 const expressAsyncHandler = require('express-async-handler');
 const express = require('express');
 const router = express.Router();
-const IncomeSchema = require('../models/incomeModel');
-const authMiddleware = require('../middlewares/authMiddleware');
+const Transaction = require('../models/transaction');
 
-// Create a new income
+// Create a new transaction (income or expense)
 router.post(
   '/',
   expressAsyncHandler(async (req, res) => {
-    const { title, amount, date, category, description } = req.body;
+    const { name, transactionType, amount, date, category, description } =
+      req.body;
 
     try {
-      const income = await IncomeSchema.create({
-        title,
+      const transaction = await Transaction.create({
+        name,
+        transactionType,
         amount,
         date,
         category,
         description,
-        user: req?.user?._id,
+        createdBy: req?.user?._id,
       });
-      res.json(income);
+      res.json(transaction);
     } catch (error) {
       res.json(error);
     }
   })
 );
 
-// Get all income records
+// Get all income and expense records
 router.get(
   '/',
   expressAsyncHandler(async (req, res) => {
     try {
-      const incomes = await IncomeSchema.find().sort({ createdAt: -1 });
+      const transactions = await Transaction.find().sort({ createdAt: -1 });
       res.status(200).json({
         status: true,
-        message: 'List of incomes found',
-        data: incomes,
+        message: 'List of transactions found',
+        data: transactions,
       });
     } catch (error) {
       res.status(500).json({
@@ -46,18 +47,18 @@ router.get(
   })
 );
 
-// Get one income by id
+// Get one transaction by id
 router.get(
   '/:id',
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
 
     try {
-      const singleIncome = await IncomeSchema.findById(id);
+      const singleTransaction = await Transaction.findById(id);
 
       res.status(200).json({
         status: true,
-        data: singleIncome,
+        data: singleTransaction,
       });
     } catch (error) {
       console.error(error);
@@ -66,18 +67,20 @@ router.get(
   })
 );
 
-// Update Income
+// Update Transaction (income or expense)
 router.put(
   '/:id',
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { title, amount, category, date, description } = req.body;
+    const { name, transactionType, amount, category, date, description } =
+      req.body;
 
     try {
-      const income = await IncomeSchema.findByIdAndUpdate(
+      const transaction = await Transaction.findByIdAndUpdate(
         id,
         {
-          title,
+          name,
+          transactionType,
           amount,
           category,
           date,
@@ -86,24 +89,24 @@ router.put(
         { new: true }
       );
 
-      res.json(income);
+      res.json(transaction);
     } catch (error) {
       res.json(error);
     }
   })
 );
 
-// Delete Income by id
+// Delete Transaction by id
 router.delete(
   '/:id',
   expressAsyncHandler(async (req, res) => {
     const { id } = req.params;
-    IncomeSchema.findByIdAndDelete(id)
-      .then((income) => {
+    Transaction.findByIdAndDelete(id)
+      .then((transaction) => {
         res.status(200).json({
           status: true,
-          message: 'Income Deleted',
-          data: income,
+          message: 'Transaction Deleted',
+          data: transaction,
         });
       })
       .catch((error) => {
