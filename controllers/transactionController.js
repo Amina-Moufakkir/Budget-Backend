@@ -1,7 +1,7 @@
 const expressAsyncHandler = require('express-async-handler');
 const express = require('express');
 const router = express.Router();
-const Transaction = require('../models/transaction');
+const Transaction = require('../models/transactionModel');
 
 // Create a new transaction (income or expense)
 router.post(
