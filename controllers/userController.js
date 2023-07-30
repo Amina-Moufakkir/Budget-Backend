@@ -39,6 +39,7 @@ router.post('/register', async (req, res) => {
   });
 });
 
+// user login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -59,6 +60,7 @@ router.post('/login', async (req, res) => {
   res.status(200).json({ user, token, isAdmin: user.isAdmin });
 });
 
+// get all users
 router.get('/', async (req, res) => {
   try {
     const users = await User.find({});
@@ -68,8 +70,8 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Update User
 router.patch('/update-user', authMiddleware, async (req, res) => {
-  // console.log(req.user);
   const { email, firstName, lastName } = req.body;
   if (!email || !firstName || !lastName) {
     throw new BadRequestError('Please provide all values');
@@ -91,30 +93,3 @@ router.patch('/update-user', authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-
-// router.delete('/:id', async (req, res) => {
-//   const { id } = req.params;
-
-//   validateMongodbId(id);
-//   try {
-//     const deletedUser = await User.findByIdAndDelete(id);
-//     res.json(deletedUser);
-//   } catch (error) {
-//     res.json(error);
-//   }
-// });
-
-// router.get('/profile', async (req, res) => {
-//   const { _id } = req?.user;
-
-//   try {
-//     const myProfile = await User.findById(_id).populate([
-//       'expenses',
-//       'income',
-//     ]);
-
-//     res.json(myProfile);
-//   } catch (error) {
-//     res.json(error);
-//   }
-// });
