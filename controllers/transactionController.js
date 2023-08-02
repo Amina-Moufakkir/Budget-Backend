@@ -160,7 +160,7 @@ router.get('/stats', async (req, res) => {
   ]);
 
   // Log the aggregation result (for debugging purposes)
-  console.log('Aggregation Result:', stats);
+  // console.log('Aggregation Result:', stats);
 
   // Transform the aggregation result to a more user-friendly format
   stats = stats.reduce((acc, curr) => {

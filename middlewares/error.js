@@ -12,9 +12,6 @@ const notFoundMiddleware = (req, res, next) => {
 
 // Middleware to handle errors in the application
 const errorHandlerMiddleware = (err, req, res, next) => {
-  // Log the error to the console for debugging purposes
-  console.log(err);
-
   // Create a default error object with a status code of 500 (Internal Server Error)
   const defaultError = {
     statusCode: err.statusCode || 500,
