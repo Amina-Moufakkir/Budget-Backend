@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: 'MONGO_URI' });
 const db = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
