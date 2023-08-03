@@ -28,9 +28,7 @@ const authMiddleware = async (req, res, next) => {
   } catch (e) {
     // If an error occurs during JWT verification, throw an UnAuthenticatedError
     // indicating invalid authentication
-    // throw new UnAuthenticatedError('Authentication Invalid');
-
-    res.status(401).json({ error: 'Authentication failed' });
+    throw new UnAuthenticatedError('Authentication Invalid');
   }
 };
 
