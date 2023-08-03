@@ -23,7 +23,7 @@ app.use(xss());
 app.use(mongoSanitize());
 
 app.use('/api/v1/users', userController);
-app.use('/api/v1/transactions', authMiddleware, transactionController);
+app.use('/api/v1/transactions', transactionController);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
