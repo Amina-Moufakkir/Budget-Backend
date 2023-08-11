@@ -59,15 +59,12 @@ router.get('/', async (req, res) => {
   let result = Transaction.find(queryObject);
   if (sort === 'highest-amount') {
     result = result.sort('-amount');
-  }
-  if (sort === 'highest-amount') {
-    result = result.sort({ amount: -1 });
-  }
-  if (sort === 'lowest-amount') {
+  } else if (sort === 'lowest-amount') {
     result = result.sort({ amount: 1 });
-  }
-  if (sort === 'z-a') {
+  } else if (sort === 'z-a') {
     result = result.sort('-name');
+  } else {
+    result = result.sort('-date');
   }
 
   // Pagination: Limit the number of results per page and skip records accordingly
@@ -219,10 +216,12 @@ router.get('/stats', async (req, res) => {
   });
 
   // Reverse the monthly data to have the most recent month first
-  monthlyTransactions.reverse();
+  const reversedMonthlyTransactions = monthlyTransactions.slice().reverse();
 
   // Return the user's stats and monthly transaction data in the response
-  res.status(200).json({ defaultStats, monthlyTransactions });
+  res
+    .status(200)
+    .json({ defaultStats, monthlyTransactions: reversedMonthlyTransactions });
 });
 
 module.exports = router;
